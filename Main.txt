@@ -161,3 +161,148 @@ NUMBER_PEOPLE_BORN_BETWEEN 1944-08-13 1977-12-15
 NUMBER_PEOPLE_BORN_BETWEEN 1987-01-24 1988-06-03
 ***
 */
+/*
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class Main {
+    private class Person{
+        private String codeP;
+        private Date dat_of_birth;
+        private Person father;
+        private Person mother;
+        private String is_alive;
+        private String region_code;
+
+        public String getCodeP() {
+            return codeP;
+        }
+
+        public Date getDat_of_birth() {
+            return dat_of_birth;
+        }
+
+        public Person getFather() {
+            return father;
+        }
+
+        public Person getMother() {
+            return mother;
+        }
+
+        public Person(String codeP, Date dat_of_birth, Person father, Person mother, String is_alive, String region_code) {
+            this.codeP = codeP;
+            this.dat_of_birth = dat_of_birth;
+            this.father = father;
+            this.mother = mother;
+            this.is_alive = is_alive;
+            this.region_code = region_code;
+        }
+
+    }
+    private List<Person> people = new ArrayList<>();
+    private List<String> queries = new ArrayList<>();
+
+    private Integer  getTheMostAncestor(Person person){
+        if(person == null) return 0;
+        Integer mother = 1 + getTheMostAncestor(person.getMother());
+        Integer father = 1 + getTheMostAncestor(person.getFather());
+        return mother > father ? mother : father;
+    }
+
+    private void initPerson(String line){
+        String[] inform = line.split(" ");
+        SimpleDateFormat DateFor = new SimpleDateFormat("yyyy-MM-dd");
+        try{
+            Person person = new Person(inform[0],DateFor.parse(inform[1]),getFatherOrMother(inform[2]),
+                    getFatherOrMother(inform[3]),inform[4],inform[5]);
+            people.add(person);
+        }catch (Exception e){
+            e.getStackTrace();
+        }
+    }
+    private Person getFatherOrMother(String codeP){
+        if(codeP.equals("0000000"))return null;
+        List<Person> peopleFilters = people.stream().filter(p -> p.getCodeP().equals(codeP)).collect(Collectors.toList());
+        if(peopleFilters !=null && peopleFilters.size() > 0 ){
+            return peopleFilters.get(0);
+        }
+        return null;
+    }
+
+    public void input(){
+        Scanner sc = new Scanner(System.in);
+        int block = 1;
+        while(true){
+            String line = sc.nextLine();
+            line = line.trim();
+            if(line.equals("\n")&&line.equals(""))continue;
+            if(line.equals("*")){
+                block = 2;
+            }else if(line.equals("***")){
+                break;
+            }else {
+                if(block == 1){
+                    initPerson(line);
+                }else if(block == 2){
+                    queries.add(line);
+                }
+            }
+        }
+    }
+    private int exccuteQuery(String query) {
+        String[] qes = query.split(" ");
+        SimpleDateFormat DateFor = new SimpleDateFormat("yyyy-MM-dd");
+        List<Person> peopleFilters = new ArrayList<>();
+        long result = 0L;
+        switch (qes[0]) {
+            case "NUMBER_PEOPLE":
+                return people.size();
+            case "NUMBER_PEOPLE_BORN_AT":
+                result = people.stream().filter(p -> {
+                    try {
+                        return p.getDat_of_birth().getTime() == DateFor.parse(qes[1]).getTime();
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).count();
+                return (int) result;
+            case "NUMBER_PEOPLE_BORN_BETWEEN":
+                result = people.stream().filter(p -> {
+                    try {
+                        return p.getDat_of_birth().getTime() >= DateFor.parse(qes[1]).getTime() && p.getDat_of_birth().getTime() <= DateFor.parse(qes[2]).getTime();
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).count();
+                return (int) result;
+            case "MOST_ALIVE_ANCESTOR":
+                peopleFilters = people.stream().filter(p -> p.getCodeP().equals(qes[1])).collect(Collectors.toList());
+                if(peopleFilters.size() > 0){
+                    return getTheMostAncestor(peopleFilters.get(0))-1;
+                }
+                return 5;
+            default:
+                // code block
+                return 1;
+        }
+    }
+    public void excuteQueries(){
+        for(int i=0; i<queries.size();i++){
+            System.out.println(exccuteQuery(queries.get(i)));
+        }
+    }
+
+    public static void main(String[] args) {
+        Main main = new Main();
+        main.input();
+        main.excuteQueries();
+    }
+}
+
+*/
