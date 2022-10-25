@@ -287,6 +287,11 @@ public class Main {
                     return getTheMostAncestor(peopleFilters.get(0))-1;
                 }
                 return 5;
+            case "MAX_UNRELATED_PEOPLE":
+                result = people.stream().filter(p ->
+                        (p.getFather() == null && p.getMother() == null)
+                ).count();
+                return (int) result;
             default:
                 // code block
                 return 1;
